@@ -1,0 +1,33 @@
+# ============================================
+# TopoCAD Pro - Dependências Python
+# ============================================
+
+# Interface Gráfica (Tkinter - built-in)
+# PyQt6 removido - usando apenas Tkinter
+
+# Bibliotecas Geoespaciais (GDAL)
+GDAL>=3.7.0
+pyproj>=3.6.0
+shapely>=2.0.0
+fiona>=1.9.0
+rasterio>=1.3.0
+geopandas>=0.13.0
+
+# Processamento de Dados
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Visualização
+matplotlib>=3.7.0
+plotly>=5.14.0
+
+# Nuvem de Pontos (LiDAR)
+laspy>=2.4.0
+
+# Exportação de Relatórios
+reportlab>=4.0.0
+openpyxl>=3.1.0
+
+# Utilitários
+python-dateutil>=2.8.2

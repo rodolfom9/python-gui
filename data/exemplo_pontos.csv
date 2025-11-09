@@ -1,0 +1,8 @@
+# Arquivo de exemplo com pontos topográficos
+# Formato: ID, X (E), Y (N), Z (Cota), Descrição
+
+1, 123456.789, 7654321.012, 100.50, Marco Principal
+2, 123500.000, 7654350.000, 102.30, Vértice V1
+3, 123550.000, 7654320.000, 101.80, Vértice V2
+4, 123520.000, 7654280.000, 99.90, Vértice V3
+5, 123470.000, 7654300.000, 100.20, Vértice V4

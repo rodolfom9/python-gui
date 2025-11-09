@@ -1,0 +1,134 @@
+ARQUITETURA FINAL - Qt QML com Menu Separado
+================================================
+
+ESTRUTURA DE ARQUIVOS:
+======================
+
+main.py (Python Entry Point)
+├── Cria QQmlApplicationEngine
+├── Registra MapBridgeMain no contexto QML
+└── Carrega main.qml
+
+main.qml (QML Entry Point)
+├── Window (1400x900)
+└── Loader → carrega map_canvas_qml_simple.qml
+
+map_canvas_qml_simple.qml (Main Interface)
+├── Rectangle (MapCanvas)
+├── Loader → carrega menu.qml
+├── Toolbar (Zoom +/-)
+├── Main content area com 3 painéis:
+│   ├── Left Panel (Camadas)
+│   ├── Center Panel (Mapa)
+│   └── Right Panel (Dados)
+└── StatusBar
+
+menu.qml (Menu Bar - Componente Separado)
+├── Rectangle (Menu Bar)
+└── 5 Menus:
+    ├── Arquivo
+    ├── Ferramentas
+    ├── Zoom
+    ├── Camadas
+    └── Ajuda
+
+
+PONTE PYTHON-QML (main.py):
+============================
+
+class MapBridgeMain(QObject):
+    Signals:
+    - layer_count_changed
+    - status_message(str)
+    - map_updated
+    
+    Slots (callable from QML):
+    - add_vector_layer(file_path) -> bool
+    - add_raster_layer(file_path) -> bool
+    - remove_layer(layer_name) -> bool
+    - zoom_in()
+    - zoom_out()
+    - zoom_to_full_extent()
+    - set_tool(tool_name)
+    
+    Properties:
+    - layer_count
+
+
+FLUXO DE EXECUÇÃO:
+==================
+
+1. Python: python main.py
+2. Python: QGuiApplication cria engine
+3. Python: MapBridgeMain criado e registrado como "mapBackend"
+4. QML: main.qml carregado (1400x900 Window)
+5. QML: Loader em main.qml carrega map_canvas_qml_simple.qml
+6. QML: Loader em map_canvas_qml_simple.qml carrega menu.qml
+7. QML: Interface renderizada com todos os componentes
+8. Runtime: Cliques em menu chamam funções Python via mapBackend
+
+
+SEPARAÇÃO DE RESPONSABILIDADES:
+================================
+
+main.qml:
+  - Define janela raiz
+  - Carrega interface principal via Loader
+
+map_canvas_qml_simple.qml:
+  - Define layout geral (toolbar, painéis, statusbar)
+  - Carrega menu via Loader
+  - Gerencia estrutura de painéis
+
+menu.qml:
+  - Define apenas a barra de menu
+  - Pode ser reutilizado em outros componentes
+  - Aciona funções Python via mapBackend
+
+main.py:
+  - Engine PyQt6/QML
+  - Bridge entre QML e sistema Python
+  - Gerencia dados (LayerManager, Renderer)
+
+
+VANTAGENS DESSA ARQUITETURA:
+==============================
+
+1. Separação de Responsabilidades:
+   - main.qml = entrada/janela
+   - map_canvas_qml_simple.qml = layout
+   - menu.qml = menu (reutilizável)
+
+2. Modularidade:
+   - Menu pode ser alterado sem tocar no canvas
+   - Canvas pode ser alterado sem tocar no menu
+   - Fácil adicionar novos componentes
+
+3. Manutenibilidade:
+   - Cada arquivo tem uma responsabilidade clara
+   - Menor arquivo = menos erros
+   - Similar ao padrão Tkinter com frames separados
+
+4. Extensibilidade:
+   - Fácil adicionar submenus (criar submenu.qml)
+   - Fácil adicionar novos painéis
+   - Fácil adicionar novos slots em MapBridgeMain
+
+
+PRÓXIMOS PASSOS PARA FUNCIONALIDADE COMPLETA:
+==============================================
+
+1. Implementar carregamento de arquivos em menu.qml:
+   - Menu "Arquivo" → "Abrir Vetor..." → Abre file dialog
+   - Chama mapBackend.add_vector_layer()
+
+2. Renderizar mapa na área central:
+   - Integrar QtMapCanvas com centro do layout
+   - Atualizar em tempo real
+
+3. Listar camadas no painel esquerdo:
+   - Conectar layer_count_changed signal
+   - Exibir lista de camadas
+
+4. Mostrar dados no painel direito:
+   - Exibir atributos de feature selecionada

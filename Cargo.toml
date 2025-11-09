@@ -1,0 +1,43 @@
+[package]
+name = "topocad_core"
+version = "0.1.0"
+edition = "2021"
+authors = ["TopoCAD Team"]
+description = "Núcleo de cálculos topográficos em Rust para TopoCAD Pro"
+
+[lib]
+name = "topocad_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+# Bindings Python
+pyo3 = { version = "0.20", features = ["extension-module"] }
+
+# GDAL para operações geoespaciais
+gdal = "0.16"
+gdal-sys = "0.9"
+
+# Geometria e projeções
+geo = "0.27"
+proj = "0.27"
+
+# Álgebra linear
+nalgebra = "0.32"
+
+# Paralelização
+rayon = "1.8"
+
+# Utilitários
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+# Nota: Este arquivo é um placeholder para futura integração com Rust
+# Para compilar, será necessário:
+# 1. Instalar Rust: https://rustup.rs/
+# 2. Criar o diretório src/ com lib.rs
+# 3. Executar: maturin develop (para desenvolvimento) ou maturin build --release

@@ -1,0 +1,122 @@
+"""
+COMPARAÇÃO: PIL + Tkinter vs Qt QML
+===================================
+
+1. ARQUITETURA PIL + TKINTER (ATUAL):
+   ═════════════════════════════════════
+   
+   GDAL/OGR
+      ↓
+   SimpleRenderer (PIL)
+      ↓ ImageDraw.Draw()
+   PIL Image (RGBA)
+      ↓
+   ImageTk.PhotoImage
+      ↓
+   Tkinter Canvas
+   
+   VANTAGENS:
+   ✓ Leve (PIL é pequeno)
+   ✓ 100% Python puro
+   ✓ Portável
+   
+   DESVANTAGENS:
+   ✗ Renderização em memória (consome RAM)
+   ✗ Sem suporte nativo a hardware acceleration
+   ✗ Integração UI limitada (apenas canvas)
+
+
+2. ARQUITETURA Qt QML (NOVO):
+   ════════════════════════════
+   
+   GDAL/OGR
+      ↓
+   QtSimpleRenderer (QPainter)
+      ↓ painter.drawPolygon()
+   QImage (RGBA)
+      ↓
+   Qt Graphics View
+      ↓
+   QML Canvas
+   
+   VANTAGENS:
+   ✓ QPainter renderiza direto (mais rápido)
+   ✓ Hardware acceleration automática
+   ✓ UI rica em QML
+   ✓ Melhor performance para grandes datasets
+   ✓ Suporte a shaders GPU (futuro)
+   
+   DESVANTAGENS:
+   ✗ Dependência de PyQt6
+   ✗ Complexidade aumentada
+
+
+3. COMO USAR Qt QML:
+   ═════════════════
+   
+   a) Instalar PyQt6:
+      pip install PyQt6 PyQt6-sip
+   
+   b) Usar renderizador Qt:
+      
+      from map_system.qml_renderer import QtSimpleRenderer, RenderContext
+      from PyQt6.QtGui import QImage
+      
+      renderer = QtSimpleRenderer()
+      context = RenderContext(800, 600, extent)
+      qimage = renderer.render(layer, context)
+   
+   c) Em QML:
+      
+      Image {
+          id: mapImage
+          source: myQImageProvider.url
+      }
+
+
+4. CAMINHO PARA PERFORMANCE MÁXIMA:
+   ═════════════════════════════════
+   
+   Passo 1: QPainter (atual) - ✓ Rápido
+   Passo 2: Shader OpenGL (médio termo) - renderizar direto em GPU
+   Passo 3: Tile-based rendering (futuro) - dividir mapa em tiles
+   Passo 4: Multi-thread rendering (futuro) - parallelizar renderização
+
+
+5. CÓDIGO EQUIVALENTE (Interface idêntica):
+   ═════════════════════════════════════════
+   
+   # Ambos usam a mesma interface:
+   
+   renderer = SimpleRenderer()      # PIL
+   renderer = QtSimpleRenderer()    # Qt
+   
+   context = RenderContext(800, 600, extent)
+   
+   image = renderer.render(layer, context)  # Retorna PIL Image ou QImage
+   
+   # A mudança é transparente!
+
+
+6. RECOMENDAÇÃO:
+   ═════════════
+   
+   → Manter PIL + Tkinter para prototipagem rápida
+   → Migrar para Qt QML quando precisar de:
+      • Performance com muitos dados
+      • UI profissional
+      • Features avançadas (rotação, 3D, etc)
+   
+   → Ambos são viáveis - escolha depende do caso de uso!
+
+"""
+
+# Exemplo: Como mudar de PIL para Qt com uma linha:
+
+# De:
+# from map_system.renderer import SimpleRenderer
+# 
+# Para:
+# from map_system.qml_renderer import QtSimpleRenderer as SimpleRenderer
+
+# ✓ Resto do código funciona igual!
