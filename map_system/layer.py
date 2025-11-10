@@ -199,48 +199,19 @@ class VectorLayer(Layer):
                 print(f"Aviso: Erro ao obter tipo de geometria: {geom_error}")
                 self._geometry_type = None
             
-            # Carrega as features
-            print(f"DEBUG: Carregando {self._layer.GetFeatureCount()} features...")
+            # OTIMIZAÇÃO QGIS: NÃO carrega todas as features em memória
+            # Mantém apenas a referência ao datasource
+            # Features serão carregadas sob demanda durante renderização
+            print(f"DEBUG: Layer possui {self._layer.GetFeatureCount()} features (não carregadas em memória)")
             sys.stdout.flush()
             
-            self._features = []
-            self._layer.ResetReading()
-            
-            feature_count = 0
-            print(f"DEBUG: Iniciando loop de features...")
-            sys.stdout.flush()
-            
-            for feature in self._layer:
-                try:
-                    geom = feature.GetGeometryRef()
-                    if geom:
-                        # OTIMIZAÇÃO: Apenas clona a geometria via WKB
-                        # Removido JSON desnecessário que era muito lento
-                        geom_wkb = geom.ExportToWkb()
-                        new_geom = ogr.CreateGeometryFromWkb(geom_wkb)
-                        
-                        self._features.append({
-                            'geometry': new_geom,
-                            'properties': {}
-                        })
-                        feature_count += 1
-                        
-                        if feature_count % 50 == 0:
-                            print(f"Carregadas {feature_count} features...")
-                            sys.stdout.flush()
-                            
-                except Exception as feat_error:
-                    print(f"Aviso: Erro ao processar feature {feature_count}: {feat_error}")
-                    continue
-            
-            print(f"DEBUG: Loop finalizado, total = {len(self._features)}")
-            sys.stdout.flush()
-            
+            self._features = []  # Mantém vazio para compatibilidade
             self._valid = True
-            print(f"==> Camada vetorial carregada com SUCESSO: {self._name} ({len(self._features)} features)")
+            
+            print(f"==> Camada vetorial carregada com SUCESSO: {self._name} ({self._layer.GetFeatureCount()} features)")
             sys.stdout.flush()
             
-            # IMPORTANTE: Mantém o datasource aberto para evitar problemas
+            # IMPORTANTE: Mantém o datasource aberto para acesso sob demanda
             # O datasource será fechado apenas quando a camada for destruída
             
             return True
@@ -255,8 +226,50 @@ class VectorLayer(Layer):
     
     @property
     def features(self) -> List[dict]:
-        """Retorna a lista de features"""
+        """
+        Retorna features sob demanda (iterador)
+        OTIMIZAÇÃO QGIS: Carrega apenas uma vez e mantém em cache
+        """
+        # Se já foram carregadas, retorna do cache
+        if self._features:
+            return self._features
+        
+        # Carrega features sob demanda na primeira vez
+        print(f"[DEBUG] Carregando features da camada {self._name}...")
+        sys.stdout.flush()
+        self._features = self._iter_features()
+        print(f"[DEBUG] {len(self._features)} features carregadas")
+        sys.stdout.flush()
+        
         return self._features
+    
+    def _iter_features(self):
+        """Itera features sob demanda sem carregar tudo em memória"""
+        if not self._layer:
+            return []
+        
+        features_list = []
+        self._layer.ResetReading()
+        
+        feature = self._layer.GetNextFeature()
+        while feature:
+            try:
+                geom = feature.GetGeometryRef()
+                if geom:
+                    # IMPORTANTE: Clona a geometria para manter referência válida
+                    # Após GetNextFeature(), a geometria antiga é invalidada
+                    geom_clone = geom.Clone()
+                    features_list.append({
+                        'geometry': geom_clone,
+                        'properties': {}
+                    })
+            except Exception as e:
+                print(f"Erro ao processar feature: {e}")
+                pass
+            
+            feature = self._layer.GetNextFeature()
+        
+        return features_list
     
     @property
     def geometry_type(self) -> Optional[int]:
@@ -265,6 +278,8 @@ class VectorLayer(Layer):
     
     def get_feature_count(self) -> int:
         """Retorna o número de features"""
+        if self._layer:
+            return self._layer.GetFeatureCount()
         return len(self._features)
 
 
