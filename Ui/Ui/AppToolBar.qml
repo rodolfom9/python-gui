@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import "../components"
+import "."
 
 ToolBar {
     id: toolbar
@@ -12,6 +12,8 @@ ToolBar {
     signal toolChanged(string tool)
     signal layerAdded(string filePath, string layerType)
     signal statusMessageChanged(string message)
+    
+    implicitHeight: 45
     
     function setActiveTool(tool) {
         activeTool = tool
@@ -30,11 +32,6 @@ ToolBar {
         spacing: 5
         
         // Grupo: Arquivos
-        Label {
-            text: "Arquivos:"
-            color: AppTheme.textSecondary
-            leftPadding: 10
-        }
         
         ToolButton {
             icon.source: "../../images/themes/default/mActionAddOgrLayer.svg"
@@ -71,10 +68,6 @@ ToolBar {
         ToolSeparator {}
         
         // Grupo: Navegação
-        Label {
-            text: "Navegação:"
-            color: AppTheme.textSecondary
-        }
         
         ToolButton {
             icon.source: "../../images/themes/default/mActionPan.svg"
@@ -133,10 +126,6 @@ ToolBar {
         ToolSeparator {}
         
         // Grupo: Ferramentas
-        Label {
-            text: "Ferramentas:"
-            color: AppTheme.textSecondary
-        }
         
         ToolButton {
             icon.source: "../../images/themes/default/mActionIdentify.svg"
@@ -154,10 +143,6 @@ ToolBar {
         ToolSeparator {}
         
         // Grupo: Desenho
-        Label {
-            text: "Desenho:"
-            color: AppTheme.textSecondary
-        }
         
         ToolButton {
             icon.source: "../../images/themes/default/mActionCapturePoint.svg"

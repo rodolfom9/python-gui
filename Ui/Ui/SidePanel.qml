@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import "../components"
+import "."
 
 Rectangle {
     id: sidePanel
@@ -56,6 +56,7 @@ Rectangle {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 5
+                clip: false
                 spacing: 10
                 
                 // Ícone Camadas

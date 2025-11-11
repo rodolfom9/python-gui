@@ -1,0 +1,10 @@
+<RCC>
+    <qresource>
+        <file>components/qmldir</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>Ui.qmlproject</file>
+        <file>Ui/qmldir</file>
+        <file>UiContent/App.qml</file>
+        <file>UiContent/Screen01.ui.qml</file>
+    </qresource>
+</RCC>

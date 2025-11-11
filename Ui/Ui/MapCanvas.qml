@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import "../components"
+import "."
 
 Rectangle {
     id: mapCanvasContainer
@@ -15,14 +15,6 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 5
         spacing: 5
-        
-        Label {
-            text: "Mapa Interativo com Map Tools"
-            font.bold: true
-            font.pixelSize: 14
-            color: AppTheme.text
-            Layout.alignment: Qt.AlignHCenter
-        }
         
         Rectangle {
             id: mapCanvas
@@ -43,14 +35,6 @@ Rectangle {
                 source: "image://mapimage/map?" + (typeof mapBackend !== 'undefined' ? mapBackend.update_counter : 0)
                 
                 // Mensagem quando não há mapa
-                Label {
-                    anchors.centerIn: parent
-                    text: "Adicione uma camada vetorial ou raster\npara visualizar o mapa"
-                    horizontalAlignment: Text.AlignHCenter
-                    color: AppTheme.textMuted
-                    font.pixelSize: 14
-                    visible: mapImage.status !== Image.Ready
-                }
             }
             
             // MouseArea para interação

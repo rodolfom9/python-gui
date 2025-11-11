@@ -409,11 +409,12 @@ def main():
     
     # Define o diretório base para recursos (onde está o QML)
     base_dir = Path(__file__).parent
-    gui_dir = base_dir / "gui"
-    engine.setBaseUrl(QUrl.fromLocalFile(str(gui_dir)))
+    ui_dir = base_dir / "Ui"
+    engine.setBaseUrl(QUrl.fromLocalFile(str(ui_dir)))
     
-    # Adiciona caminho para componentes
-    engine.addImportPath(str(gui_dir / "components"))
+    # Adiciona caminhos para componentes e módulos
+    engine.addImportPath(str(ui_dir / "Ui"))  # Para componentes como AppMenuBar, etc
+    engine.addImportPath(str(ui_dir))  # Para módulo "Ui"
     
     # Cria image provider
     image_provider = MapImageProvider()
@@ -426,9 +427,9 @@ def main():
     engine.rootContext().setContextProperty("mapBackend", map_bridge)
     
     # Carrega QML
-    qml_file = gui_dir / "Main.qml"
+    qml_file = ui_dir / "UiContent" / "App.qml"
     print(f"Carregando QML: {qml_file}")
-    print(f"Diretório base: {gui_dir}")
+    print(f"Diretório base: {ui_dir}")
     
     engine.load(QUrl.fromLocalFile(str(qml_file)))
     
@@ -453,3 +454,439 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    def set_layer_visibility(self, layer_name: str, visible: bool) -> None:
+        """Define visibilidade da camada"""
+        success = self.layer_manager.set_layer_visibility(layer_name, visible)
+        if success:
+            self.status_message.emit(f"Camada '{layer_name}' " + ("visível" if visible else "oculta"))
+    
+    @pyqtSlot()
+
+    def zoom_in(self):
+
+        """Zoom in"""
+
+        if self._extent:
+
+            self._zoom(1.0 / 1.2)
+
+            self.render_map()
+
+            self.map_updated.emit()
+
+            self.status_message.emit("Zoom In")
+
+    
+
+    @pyqtSlot()
+
+    def zoom_out(self):
+
+        """Zoom out"""
+
+        if self._extent:
+
+            self._zoom(1.2)
+
+            self.render_map()
+
+            self.map_updated.emit()
+
+            self.status_message.emit("Zoom Out")
+
+    
+
+    @pyqtSlot()
+
+    def zoom_to_full_extent(self):
+
+        """Zoom total"""
+
+        combined_extent = self.layer_manager.get_combined_extent()
+
+        if combined_extent:
+
+            self._zoom_to_extent(combined_extent)
+
+            self.render_map()
+
+            self.map_updated.emit()
+
+            self.status_message.emit("Zoom Total")
+
+    
+
+    @pyqtSlot(str)
+
+    def set_tool(self, tool_name: str):
+
+        """Define ferramenta ativa"""
+
+        self.status_message.emit(f"Ferramenta: {tool_name}")
+
+    
+
+    @pyqtSlot(int, int)
+
+    def set_canvas_size(self, width: int, height: int):
+
+        """Define tamanho do canvas"""
+
+        self._width = width
+
+        self._height = height
+
+        if self._extent:
+
+            self.render_map()
+
+    
+
+    @pyqtSlot()
+
+    def render_map(self):
+
+        """Renderiza o mapa"""
+
+        print(f"[DEBUG] render_map chamado - extent: {self._extent}, layers: {self.layer_manager.layer_count()}")
+
+        
+
+        if not self._extent or self.layer_manager.layer_count() == 0:
+
+            print("[DEBUG] Sem extent ou camadas, pulando renderização")
+
+            return
+
+        
+
+        if self._width <= 0 or self._height <= 0:
+
+            print(f"[DEBUG] Dimensões inválidas: {self._width}x{self._height}")
+
+            return
+
+        
+
+        try:
+
+            print(f"[DEBUG] Criando QImage base: {self._width}x{self._height}")
+
+            # Cria QImage base branca
+
+            base_image = QImage(self._width, self._height, QImage.Format.Format_RGB32)
+
+            base_image.fill(0xFFFFFF)  # Branco
+
+            
+
+            print(f"[DEBUG] Criando RenderContext")
+
+            # Cria contexto de renderização
+
+            context = RenderContext(
+
+                width=self._width,
+
+                height=self._height,
+
+                extent=self._extent
+
+            )
+
+            
+
+            # Cria QPainter para compor as camadas
+
+            from PyQt6.QtGui import QPainter
+
+            painter = QPainter(base_image)
+
+            
+
+            print(f"[DEBUG] Renderizando {self.layer_manager.layer_count()} camadas")
+
+            # Renderiza todas as camadas
+
+            layer_count = 0
+
+            for layer in self.layer_manager.get_all_layers():
+
+                if layer.visible:
+
+                    print(f"[DEBUG] Renderizando camada: {layer.name}")
+
+                    try:
+
+                        # Renderer retorna uma QImage
+
+                        layer_image = self.renderer.render(layer, context)
+
+                        if layer_image:
+
+                            # Desenha a imagem da camada na imagem base
+
+                            painter.drawImage(0, 0, layer_image)
+
+                            layer_count += 1
+
+                    except Exception as layer_error:
+
+                        print(f"[ERRO] Falha ao renderizar camada {layer.name}: {str(layer_error)}")
+
+                        import traceback
+
+                        traceback.print_exc()
+
+            
+
+            painter.end()
+
+            print(f"[DEBUG] {layer_count} camadas renderizadas com sucesso")
+
+            
+
+            # Atualiza o image provider
+
+            print(f"[DEBUG] Atualizando image provider")
+
+            self.image_provider.set_image(base_image)
+
+            
+
+            # Incrementa contador e emite sinal
+
+            self._update_counter += 1
+
+            print(f"[DEBUG] Emitindo image_updated (counter: {self._update_counter})")
+
+            self.image_updated.emit()
+
+            
+
+            print(f"[OK] Mapa renderizado: {self._width}x{self._height}")
+
+            
+
+        except Exception as e:
+
+            print(f"[ERRO CRÍTICO] Erro ao renderizar: {str(e)}")
+
+            import traceback
+
+            traceback.print_exc()
+
+    
+
+    @pyqtProperty(int, notify=image_updated)
+
+    def update_counter(self):
+
+        """Contador de atualizações para forçar refresh da imagem"""
+
+        return self._update_counter
+
+    
+
+    def _zoom(self, factor):
+
+        """Aplica zoom"""
+
+        if not self._extent:
+
+            return
+
+        
+
+        minx, miny, maxx, maxy = self._extent
+
+        
+
+        cx = (minx + maxx) / 2
+
+        cy = (miny + maxy) / 2
+
+        
+
+        width = (maxx - minx) * factor
+
+        height = (maxy - miny) * factor
+
+        
+
+        self._extent = (
+
+            cx - width / 2,
+
+            cy - height / 2,
+
+            cx + width / 2,
+
+            cy + height / 2
+
+        )
+
+    
+
+    def _zoom_to_extent(self, extent):
+
+        """Ajusta zoom para extensao"""
+
+        minx, miny, maxx, maxy = extent
+
+        
+
+        width = maxx - minx
+
+        height = maxy - miny
+
+        margin_x = width * 0.05
+
+        margin_y = height * 0.05
+
+        
+
+        self._extent = (
+
+            minx - margin_x,
+
+            miny - margin_y,
+
+            maxx + margin_x,
+
+            maxy + margin_y
+
+        )
+
+    
+
+    @property
+
+    def layer_count(self):
+
+        """Retorna numero de camadas"""
+
+        return self.layer_manager.layer_count()
+
+
+
+
+
+def main():
+
+    """Funcao principal"""
+
+    app = QApplication(sys.argv)
+
+    app.setApplicationName("Sistema de Mapa Interativo - Map Tools")
+
+    app.setApplicationVersion("1.0")
+
+    
+
+    print("=" * 70)
+
+    print("Sistema de Mapa Interativo - Map Tools")
+
+    print("=" * 70)
+
+    print("[OK] Renderizador: QtSimpleRenderer (QPainter native)")
+
+    print("[OK] Interface: Qt QML com Menus")
+
+    print("[OK] Backend: Python + GDAL/OGR")
+
+    print("=" * 70)
+
+    
+
+    # Cria engine
+
+    engine = QQmlApplicationEngine()
+
+    
+    # Define o diretório base para recursos (onde está o QML)
+    base_dir = Path(__file__).parent
+    gui_dir = base_dir / "gui"
+    engine.setBaseUrl(QUrl.fromLocalFile(str(gui_dir)))
+    
+    # Adiciona caminho para componentes
+    engine.addImportPath(str(gui_dir / "components"))
+    
+
+    # Cria image provider
+
+    image_provider = MapImageProvider()
+
+    engine.addImageProvider("mapimage", image_provider)
+
+    
+
+    # Cria bridge com image provider
+
+    map_bridge = MapBridgeMain(image_provider)
+
+    
+
+    # Registra bridge no QML
+
+    engine.rootContext().setContextProperty("mapBackend", map_bridge)
+
+    
+
+    # Carrega QML
+
+    qml_file = gui_dir / "UiContent" / "App.qml"
+    print(f"Carregando QML: {qml_file}")
+
+    print(f"Diretório base: {gui_dir}")
+    
+
+    engine.load(QUrl.fromLocalFile(str(qml_file)))
+
+    
+
+    if not engine.rootObjects():
+
+        print("Erro: Nao foi possivel carregar QML")
+
+        sys.exit(-1)
+
+    
+
+    print("[OK] Interface QML carregada com sucesso!")
+
+    print("[OK] Menus do Tkinter integrados no QML")
+
+    print("[OK] Janela exibida")
+
+    print("=" * 70)
+
+    print("Use os menus: Arquivo, Ferramentas, Camadas, Ajuda")
+
+    print("Pressione Ctrl+C para sair\n")
+
+    
+
+    # Force a exibicao da janela
+
+    root = engine.rootObjects()[0]
+
+    if root:
+
+        root.show()
+
+    
+
+    sys.exit(app.exec())
+
+
+
+
+
+if __name__ == "__main__":
+
+    main()
+
+

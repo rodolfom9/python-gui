@@ -1,0 +1,14 @@
+module Ui
+singleton AppTheme 1.0 Ui/AppTheme.qml
+AppMenuBar 1.0 Ui/AppMenuBar.qml
+AppStatusBar 1.0 Ui/AppStatusBar.qml
+AppToolBar 1.0 Ui/AppToolBar.qml
+EmptyPanel 1.0 Ui/EmptyPanel.qml
+InfoPanel 1.0 Ui/InfoPanel.qml
+LayersPanel 1.0 Ui/LayersPanel.qml
+MapCanvas 1.0 Ui/MapCanvas.qml
+ProcessingPanel 1.0 Ui/ProcessingPanel.qml
+PropertiesPanel 1.0 Ui/PropertiesPanel.qml
+SidePanel 1.0 Ui/SidePanel.qml
+MainWindow 1.0 UiContent/MainWindow.ui.qml
+

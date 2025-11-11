@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Basic
-import "../components"
+import "."
 
 MenuBar {
     id: mainMenuBar
@@ -11,8 +11,10 @@ MenuBar {
     signal zoomFullExtent()
     signal mapRefreshed()
     
+    implicitHeight: 40
+    
     background: Rectangle {
-        color: "#1e1e1e"
+        color: "#3e3e42"
         border.color: AppTheme.accentColor
         border.width: 1
         

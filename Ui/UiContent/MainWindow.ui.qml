@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
 import QtQuick.Window
-import "components"
+import Ui
 
 ApplicationWindow {
     id: mainWindow
@@ -177,7 +177,6 @@ ApplicationWindow {
         id: aboutDialog
         title: "Sobre"
         modal: true
-        anchors.centerIn: parent
         
         contentItem: ColumnLayout {
             spacing: 10
@@ -243,3 +242,4 @@ ApplicationWindow {
         appStatusBar.showMessage("Sistema iniciado - Ferramenta: Pan")
     }
 }
+
