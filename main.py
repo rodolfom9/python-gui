@@ -223,6 +223,8 @@ class MapBridgeMain(QObject):
             self.layer_count_changed.emit()
             self.map_updated.emit()
             self.status_message.emit(f"Camada removida: {layer_name}")
+            # Renderiza o mapa novamente após remover a camada
+            self.render_map()
         return success
     
     @pyqtSlot()
@@ -398,6 +400,10 @@ def main():
     # Cria engine
     engine = QQmlApplicationEngine()
     
+    # Define o diretório base para recursos (onde está o QML)
+    base_dir = Path(__file__).parent
+    engine.setBaseUrl(QUrl.fromLocalFile(str(base_dir)))
+    
     # Cria image provider
     image_provider = MapImageProvider()
     engine.addImageProvider("mapimage", image_provider)
@@ -409,8 +415,9 @@ def main():
     engine.rootContext().setContextProperty("mapBackend", map_bridge)
     
     # Carrega QML
-    qml_file = Path(__file__).parent / "main.qml"
+    qml_file = base_dir / "main.qml"
     print(f"Carregando QML: {qml_file}")
+    print(f"Diretório base: {base_dir}")
     
     engine.load(QUrl.fromLocalFile(str(qml_file)))
     
