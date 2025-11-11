@@ -227,6 +227,13 @@ class MapBridgeMain(QObject):
             self.render_map()
         return success
     
+    @pyqtSlot(str, bool)
+    def set_layer_visibility(self, layer_name: str, visible: bool) -> None:
+        """Define visibilidade da camada"""
+        success = self.layer_manager.set_layer_visibility(layer_name, visible)
+        if success:
+            self.status_message.emit(f"Camada '{layer_name}' " + ("visível" if visible else "oculta"))
+    
     @pyqtSlot()
     def zoom_in(self):
         """Zoom in"""
@@ -402,7 +409,11 @@ def main():
     
     # Define o diretório base para recursos (onde está o QML)
     base_dir = Path(__file__).parent
-    engine.setBaseUrl(QUrl.fromLocalFile(str(base_dir)))
+    gui_dir = base_dir / "gui"
+    engine.setBaseUrl(QUrl.fromLocalFile(str(gui_dir)))
+    
+    # Adiciona caminho para componentes
+    engine.addImportPath(str(gui_dir / "components"))
     
     # Cria image provider
     image_provider = MapImageProvider()
@@ -415,9 +426,9 @@ def main():
     engine.rootContext().setContextProperty("mapBackend", map_bridge)
     
     # Carrega QML
-    qml_file = base_dir / "main.qml"
+    qml_file = gui_dir / "Main.qml"
     print(f"Carregando QML: {qml_file}")
-    print(f"Diretório base: {base_dir}")
+    print(f"Diretório base: {gui_dir}")
     
     engine.load(QUrl.fromLocalFile(str(qml_file)))
     
