@@ -96,14 +96,38 @@ ApplicationWindow {
     // Área principal
     SplitView {
         anchors.fill: parent
+        anchors.topMargin: 5
+        anchors.bottomMargin: 5
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
         orientation: Qt.Horizontal
         
-        // Painel lateral
-        SidePanel {
-            id: sidePanel
+        // Remover o handle de resize visual (invisível e sem interação)
+        handle: Rectangle {
+            implicitWidth: 0
+            implicitHeight: 0
+            color: "transparent"
+            visible: false
+            
+            // Remove a área de interação do handle
+            containmentMask: Item {
+                width: 0
+                height: 0
+            }
+        }
+        
+        // Container para o painel lateral com margem
+        Item {
             SplitView.fillHeight: true
-            SplitView.preferredWidth: sidePanel.collapsed ? 50 : 280
-            SplitView.minimumWidth: 50
+            SplitView.preferredWidth: sidePanel.collapsed ? 55 : 285
+            SplitView.maximumWidth: sidePanel.collapsed ? 55 : 285
+            SplitView.minimumWidth: sidePanel.collapsed ? 55 : 285  // Mesmo tamanho, não permite resize
+            
+            // Painel lateral
+            SidePanel {
+                id: sidePanel
+                anchors.fill: parent
+                anchors.rightMargin: 5
             
             // Conectar sinais das camadas
             Connections {
@@ -123,6 +147,7 @@ ApplicationWindow {
                     }
                     appStatusBar.showMessage(layerName + " " + (visible ? "visível" : "oculto"))
                 }
+            }
             }
         }
         

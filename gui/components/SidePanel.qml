@@ -20,6 +20,10 @@ Rectangle {
     
     // Cores
     color: AppTheme.windowBg
+    border.color: AppTheme.accentColor
+    border.width: 1
+    radius: 8
+    clip: true
     
     property int previousIndex: -1
     
