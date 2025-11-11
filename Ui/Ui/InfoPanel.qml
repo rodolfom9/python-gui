@@ -39,7 +39,7 @@ Rectangle {
                       "• Wheel: Zoom no cursor\n\n" +
                       "ℹ️ CONSULTA:\n" +
                       "• Identificar: Clique em features\n\n" +
-                      "✏️ DESENHO:\n" +
+                      "DESENHO:\n" +
                       "• Ponto: Clique para adicionar\n" +
                       "• Linha: Cliques para vértices\n" +
                       "  Botão direito: Finalizar\n" +

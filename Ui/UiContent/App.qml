@@ -1,5 +1,8 @@
 import QtQuick
-import Ui
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
+import "../Ui"
 
 MainWindow {
 }

@@ -315,10 +315,24 @@ Rectangle {
                 ProcessingPanel {}
                 
                 // Aba 4: Ferramentas
-                EmptyPanel { title: "Ferramentas" }
+                ToolsPanel {
+                    onToolSelected: (toolName) => {
+                        // Propaga o sinal para o MainWindow
+                    }
+                    onStatusMessage: (msg) => {
+                        // Propaga mensagem de status
+                    }
+                }
                 
                 // Aba 5: Navegador
-                EmptyPanel { title: "Navegador de Arquivos" }
+                BrowserPanel {
+                    onFileSelected: (filePath, fileType) => {
+                        sidePanel.layerAdded(filePath, fileType)
+                    }
+                    onStatusMessage: (msg) => {
+                        // Propaga mensagem de status
+                    }
+                }
                 
                 // Aba 6: Nova Camada
                 EmptyPanel { title: "Criar Nova Camada" }

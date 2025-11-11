@@ -177,6 +177,8 @@ ApplicationWindow {
         id: aboutDialog
         title: "Sobre"
         modal: true
+        width: 400
+        height: 300
         
         contentItem: ColumnLayout {
             spacing: 10

@@ -10,6 +10,11 @@ MenuBar {
     signal statusMessageChanged(string message)
     signal zoomFullExtent()
     signal mapRefreshed()
+    opacity: 1
+    font.bold: true
+    font.family: "Verdana"
+    wheelEnabled: false
+    clip: false
     
     implicitHeight: 40
     

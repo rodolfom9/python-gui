@@ -1,4 +1,4 @@
-module Ui
+module Ui 1.0
 singleton AppTheme 1.0 Ui/AppTheme.qml
 AppMenuBar 1.0 Ui/AppMenuBar.qml
 AppStatusBar 1.0 Ui/AppStatusBar.qml

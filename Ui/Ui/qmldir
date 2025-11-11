@@ -3,6 +3,9 @@ singleton AppTheme 1.0 AppTheme.qml
 AppMenuBar 1.0 AppMenuBar.qml
 AppStatusBar 1.0 AppStatusBar.qml
 AppToolBar 1.0 AppToolBar.qml
+AttributeTablePanel 1.0 AttributeTablePanel.qml
+AttributeTableWindow 1.0 AttributeTableWindow.qml
+BrowserPanel 1.0 BrowserPanel.qml
 EmptyPanel 1.0 EmptyPanel.qml
 InfoPanel 1.0 InfoPanel.qml
 LayersPanel 1.0 LayersPanel.qml
@@ -10,4 +13,5 @@ MapCanvas 1.0 MapCanvas.qml
 ProcessingPanel 1.0 ProcessingPanel.qml
 PropertiesPanel 1.0 PropertiesPanel.qml
 SidePanel 1.0 SidePanel.qml
+ToolsPanel 1.0 ToolsPanel.qml
 

@@ -1,10 +1,25 @@
 <RCC>
     <qresource>
-        <file>components/qmldir</file>
+        <file>qmldir</file>
         <file>qtquickcontrols2.conf</file>
         <file>Ui.qmlproject</file>
+        <file>Ui/AppMenuBar.qml</file>
+        <file>Ui/AppStatusBar.qml</file>
+        <file>Ui/AppTheme.qml</file>
+        <file>Ui/AppToolBar.qml</file>
+        <file>Ui/AttributeTablePanel.qml</file>
+        <file>Ui/AttributeTableWindow.qml</file>
+        <file>Ui/BrowserPanel.qml</file>
+        <file>Ui/EmptyPanel.qml</file>
+        <file>Ui/InfoPanel.qml</file>
+        <file>Ui/LayersPanel.qml</file>
+        <file>Ui/MapCanvas.qml</file>
+        <file>Ui/ProcessingPanel.qml</file>
+        <file>Ui/PropertiesPanel.qml</file>
         <file>Ui/qmldir</file>
+        <file>Ui/SidePanel.qml</file>
+        <file>Ui/ToolsPanel.qml</file>
         <file>UiContent/App.qml</file>
-        <file>UiContent/Screen01.ui.qml</file>
+        <file>UiContent/MainWindow.ui.qml</file>
     </qresource>
 </RCC>
